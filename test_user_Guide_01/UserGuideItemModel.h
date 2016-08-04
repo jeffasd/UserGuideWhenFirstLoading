@@ -24,4 +24,10 @@
 @property(nonatomic, copy) NSString *guidBtnImageName;
 @property(nonatomic, copy) NSString *guidBtnType;
 
+@property(nonatomic, strong) NSNumber *guidFocusViewWidth;
+@property(nonatomic, strong) NSNumber *guidFocusViewHeigth;
+@property(nonatomic, strong) NSNumber *guidFocusViewCenterX;
+@property(nonatomic, strong) NSNumber *guidFocusViewCenterY;
+@property(nonatomic, strong) NSNumber *guidFocusViewType;
+
 @end

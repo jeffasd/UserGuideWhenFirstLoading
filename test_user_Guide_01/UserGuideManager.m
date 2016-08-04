@@ -26,6 +26,10 @@ typedef void(^CompleteBlock)(void);
 
 @property (nonatomic, weak) UIView *converView;
 
+@property (nonatomic, strong) UIBezierPath *converPath;
+
+@property (nonatomic, strong) UserGuideModel *model;
+
 @end
 
 @implementation UserGuideManager
@@ -80,7 +84,7 @@ typedef void(^CompleteBlock)(void);
 //通过guideView来传递 引导页视图的中心位置的大小 中点
 - (void)showItemsInView:(UIView *)view VCKeyStr:(NSString *)vcKeyStr FinishBlock:(void(^)())block{
     
-    UserGuideModel *model = [[self class] getUserGuideModelWithVCKey:vcKeyStr];
+    _model = [[self class] getUserGuideModelWithVCKey:vcKeyStr];
     
 //    NSLog(@"model is %@", model);
 
@@ -93,25 +97,23 @@ typedef void(^CompleteBlock)(void);
     }
     
     _backgroundView = view;
-    
-    if ([model.guideVCKey isEqualToString:@"ViewController"]) {
-        
-        //先将所有的guideItem内的内容构建完毕 再画焦点视图
-        for (int i = 0; i < model.guideItmes.count; i++) {
-            
-            UserGuideItemModel *itemModel = model.guideItmes[i];
-            
-            [self createUIWithUserGuideItemModel:itemModel];
-        }
-        
-        [self createMaskLayerWithSuperView:_backgroundView];
-    }
-    
-    self.completeBlock = block;
+
+    [self createItemWithUserGuideItmes:_model.guideItmes];
     
 }
 
-- (void)createUIWithUserGuideItemModel:(UserGuideItemModel *)itemModel{
+- (void)createItemWithUserGuideItmes:(NSArray<UserGuideItemModel *> *)guideItmes{
+    
+    static int i = 0;
+    if (guideItmes.count > i) {
+        UserGuideItemModel *itemModel = guideItmes[i];
+        [self createConverViewAndPathAndGuideLayerInKeyWindow];
+        [self createUIWithUserGuideItemModel:itemModel];
+        i++;
+    }
+}
+
+- (void)createConverViewAndPathAndGuideLayerInKeyWindow{
     
     //converView 添加到keyWindow上面
     UIView *converView = [UIView new];
@@ -121,6 +123,16 @@ typedef void(^CompleteBlock)(void);
     [keyWindow addSubview:converView];
     
     self.converView = converView;
+    _userGuideLayer = [CAShapeLayer layer];
+    _userGuideLayer.fillRule = kCAFillRuleEvenOdd;
+    UIColor *color = [UIColor blackColor];
+    color = [color colorWithAlphaComponent:0.8];
+    _userGuideLayer.fillColor = color.CGColor;
+    _converPath = [UIBezierPath bezierPathWithRect:_backgroundView.frame];
+    
+}
+
+- (void)createUIWithUserGuideItemModel:(UserGuideItemModel *)itemModel{
     
     UILabel *label = [UILabel new];
     label.backgroundColor = [UIColor cyanColor];
@@ -131,7 +143,7 @@ typedef void(^CompleteBlock)(void);
     label.frame = CGRectMake(0, 0, labelSize.width, labelSize.height);
     CGPoint labelCenterPoint = CGPointMake(ScreenWidth * [itemModel.guidlabelCenterX floatValue], ScreenHeight * [itemModel.guidlabelCenterY floatValue]);
     label.center = labelCenterPoint;
-    [converView addSubview:label];
+    [_converView addSubview:label];
     
     
     NSString *imageName = itemModel.guidImageName;
@@ -139,7 +151,7 @@ typedef void(^CompleteBlock)(void);
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     CGPoint imageCenterPoint = CGPointMake(ScreenWidth * [itemModel.guidImageCenterX floatValue], ScreenHeight * [itemModel.guidImageCenterY floatValue]);
     imageView.center = imageCenterPoint;
-    [converView addSubview:imageView];
+    [_converView addSubview:imageView];
     
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -153,40 +165,46 @@ typedef void(^CompleteBlock)(void);
     CGPoint btnCenterPoint = CGPointMake(ScreenWidth * [itemModel.guidBtnCenterX floatValue], ScreenHeight * [itemModel.guidBtnCenterY floatValue]);
     btn.center = btnCenterPoint;
     [btn addTarget:self action:@selector(completeBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [converView addSubview:btn];
+    [_converView addSubview:btn];
     
+    CGFloat guidFocusViewWidth = [itemModel.guidFocusViewWidth floatValue] * ScreenWidth;
+    CGFloat guidFocusViewHeight = 0;
+    if ([itemModel.guidFocusViewHeigth floatValue] == 0) {
+        guidFocusViewHeight = guidFocusViewWidth;
+    }else{
+        guidFocusViewHeight = [itemModel.guidFocusViewHeigth floatValue] * ScreenHeight;
+    }
     
+    CGFloat guidFocusViewCenterX = [itemModel.guidFocusViewCenterX floatValue] * ScreenWidth;
+    CGFloat guidFocusViewCenterY = [itemModel.guidFocusViewCenterY floatValue] * ScreenHeight;
+    
+    CGRect guidFocusViewRect = CGRectMake(guidFocusViewCenterX - guidFocusViewWidth/2.0, guidFocusViewCenterY - guidFocusViewHeight/2.0, guidFocusViewWidth, guidFocusViewHeight);
+    
+    if ([itemModel.guidFocusViewType integerValue] == UserGuideFocusTypeModeRound) {
+        
+        UIBezierPath *roundPath = [UIBezierPath bezierPathWithOvalInRect:guidFocusViewRect];
+        [_converPath appendPath:roundPath];
+    }else if ([itemModel.guidFocusViewType integerValue] == UserGuideFocusTypeModeRect){
+        
+        UIBezierPath *rectPath = [UIBezierPath bezierPathWithRect:guidFocusViewRect];
+        [_converPath appendPath:rectPath];
+    }
+    
+    _userGuideLayer.path = _converPath.CGPath;
+    
+    [_backgroundView.layer addSublayer:_userGuideLayer];
 }
 
 - (void)completeBtnClick:(UIButton *)sender{
     
+    [_converView removeFromSuperview];
+    [_userGuideLayer removeFromSuperlayer];
+    
+    [self createItemWithUserGuideItmes:_model.guideItmes];
+    
     if (_completeBlock) {
-        
-        [_converView removeFromSuperview];
-        [_userGuideLayer removeFromSuperlayer];
         _completeBlock();
     }
-}
-
-- (void)createMaskLayerWithSuperView:(UIView *)superView{
-    
-    _userGuideLayer = [CAShapeLayer layer];
-    
-    _userGuideLayer.fillRule = kCAFillRuleEvenOdd;
-    
-    UIColor *color = [UIColor blackColor];
-    color = [color colorWithAlphaComponent:0.8];
-    _userGuideLayer.fillColor = color.CGColor;
-    
-    UIBezierPath *path = [UIBezierPath bezierPathWithRect:superView.frame];
-    
-    UIBezierPath *roundPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(100, superView.frame.size.height - 100, 100, 100)];
-    [path appendPath:roundPath];
-    
-    _userGuideLayer.path = path.CGPath;
-    
-    [superView.layer addSublayer:_userGuideLayer];
-    
 }
 
 @end

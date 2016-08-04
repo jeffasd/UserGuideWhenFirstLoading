@@ -42,7 +42,7 @@
     
     BOOL isFistLoading = [JFHelpTools currentVersionIsFirstLoading];
     
-    if (isFistLoading) {
+    if (!isFistLoading) {
         [self showUserGuide];
     }
     

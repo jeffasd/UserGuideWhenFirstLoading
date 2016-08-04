@@ -10,12 +10,13 @@
 #import <Foundation/Foundation.h>
 
 
-typedef NS_ENUM(NSInteger, UserTypeMode)
+typedef NS_ENUM(NSInteger, UserGuideFocusTypeMode)
 {
-    UserTypeModeNone = 0,
-    UserTypeModeCircle,
-    UserTypeModeRect,
-}; // 用户引导类型
+    UserGuideFocusTypeModeNone = 0,
+    UserGuideFocusTypeModeRound,
+    UserGuideFocusTypeModeRect,
+    UserGuideFocusTypeModeArc,
+}; // 用户引导焦点视图类型
 
 
 @interface UserGuideManager : NSObject

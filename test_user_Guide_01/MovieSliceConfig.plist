@@ -34,6 +34,54 @@
 					<string>jiantou6</string>
 					<key>guidBtnType</key>
 					<string>normal</string>
+					<key>guidFocusViewWidth</key>
+					<real>0.3</real>
+					<key>guidFocusViewHeigth</key>
+					<integer>0</integer>
+					<key>guidFocusViewCenterX</key>
+					<real>0.4</real>
+					<key>guidFocusViewCenterY</key>
+					<real>0.9</real>
+					<key>guidFocusViewType</key>
+					<integer>1</integer>
+				</dict>
+				<dict>
+					<key>guidItemType</key>
+					<string>normal</string>
+					<key>guidlabelCenterX</key>
+					<real>0.5</real>
+					<key>guidlabelCenterY</key>
+					<real>0.3</real>
+					<key>guidLabelStr</key>
+					<string>点击下方按钮开始拍摄视频</string>
+					<key>guidLabelFont</key>
+					<integer>16</integer>
+					<key>guidImageCenterX</key>
+					<real>0.5</real>
+					<key>guidImageCenterY</key>
+					<real>0.5</real>
+					<key>guidImageName</key>
+					<string>jiantou6</string>
+					<key>guidBtnCenterX</key>
+					<real>0.5</real>
+					<key>guidBtnCenterY</key>
+					<real>0.7</real>
+					<key>guidBtnStr</key>
+					<string>开始拍照</string>
+					<key>guidBtnImageName</key>
+					<string>jiantou6</string>
+					<key>guidBtnType</key>
+					<string>normal</string>
+					<key>guidFocusViewWidth</key>
+					<real>0.3</real>
+					<key>guidFocusViewHeigth</key>
+					<integer>0</integer>
+					<key>guidFocusViewCenterX</key>
+					<real>0.7</real>
+					<key>guidFocusViewCenterY</key>
+					<real>0.9</real>
+					<key>guidFocusViewType</key>
+					<integer>1</integer>
 				</dict>
 			</array>
 			<key>guideVCKey</key>
