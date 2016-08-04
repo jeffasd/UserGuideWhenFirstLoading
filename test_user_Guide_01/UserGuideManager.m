@@ -82,6 +82,7 @@ typedef void(^CompleteBlock)(void);
 }
 
 //通过guideView来传递 引导页视图的中心位置的大小 中点
+//vcKeyStr 暂时没有使用 当一个VC有两个风格不同的引导时使用此key
 - (void)showItemsInView:(UIView *)view VCKeyStr:(NSString *)vcKeyStr FinishBlock:(void(^)())block{
     
     _model = [[self class] getUserGuideModelWithVCKey:vcKeyStr];

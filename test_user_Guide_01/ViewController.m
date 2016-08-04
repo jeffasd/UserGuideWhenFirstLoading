@@ -37,9 +37,6 @@
     
     [super viewDidAppear:animated];
     
-
-//    [JFHelpTools compareCurrentVersionToStandBoxVersion];
-    
     BOOL isFistLoading = [JFHelpTools currentVersionIsFirstLoading];
     
     if (!isFistLoading) {

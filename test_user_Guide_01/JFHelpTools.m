@@ -2,7 +2,7 @@
 //  JFHelpTools.m
 //  test_user_Guide_01
 //
-//  Created by cdd on 16/8/3.
+//  Created by jeffasd on 16/8/3.
 //  Copyright © 2016年 jeffasd. All rights reserved.
 //
 
@@ -32,7 +32,7 @@
     
 }
 
-//内部方法
+//内部方法 外部不能调用
 + (void)compareCurrentVersionToStandBoxVersion{
     
     NSString *currentVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentVersion];
